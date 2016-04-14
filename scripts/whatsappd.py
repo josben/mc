@@ -1,4 +1,18 @@
-#!/home/cerrajero/Projects/hades-env/bin/python
+#!/home/benji/Projects/envs/mc-env/bin/python
+
+import sys,os
+#from datetime import *
+sys.path.append('/home/benji/Projects/me/mc')
+#os.environ['DJANGO_SETTINGS_MODULE'] ='mc.settings'
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mc.settings")
+
+#from django.core.management import setup_environ
+#from mc import settings
+
+import django
+from django.conf import settings
+
+django.setup()
 
 from yowsup.layers.auth import AuthError
 
@@ -6,39 +20,45 @@ from wasend import YowsupSendStack
 from wareceive import (YowsupReceiveStack,
                        MessageReceived,
                        MediaMessageReceived)
-from message.models import (Message_Center_Received,
-                            Message_Center_Sent)
-from contacts.models import (Contact, Contact_Number)
-from utils import getMediaFromHttps
-from thread import start_new_thread
+from messagescenter.models import (MessageCenterReceived,
+                                   MessageCenterSent)
+from contacts.models import (Contact, ContactNumber)
+#from utils import getMediaFromHttps
+#from thread import start_new_thread
 
 import datetime
 import time
 
 def credential():
-     return "591", ""
+     return "", ""
 
-def anomaly_detector(phone, image, whatsapp):
-    print 'PROCESANDO DEL TELEFONO: %s' % phone
-    time.sleep(5)
-    whatsapp.update(anomaly=True)
+#def anomaly_detector(phone, image, whatsapp):
+#    print ('PROCESANDO DEL TELEFONO: %s' % phone)
+#    time.sleep(5)
+#    whatsapp.update(anomaly=True)
     #disanti_function()
 
 def saveWhatsapp(phone, type_message, message):
     try:
-        contact = Contact_Number.objects.get(phone=phone)
-    except Contact_Number.DoesNotExist:
+        contact = ContactNumber.objects.get(phone=phone)
+    except ContactNumber.DoesNotExist:
         # If number phone not exist
         contact = Contact(nickname=phone)
         contact.save()
-        contact_number = Contact_Number(contact=contact,
-                                        phone=phone)
+        contact_number = ContactNumber(contact=contact,
+                                       country_code='591',
+                                       phone=phone)
         contact_number.save()
 
-        if type_message is not 'image' and type_message is not 'video' and type_message is not 'audio':
-            whatsapp = Message_Center_Received(contact=contact,
-                                               message_received=message)
-            whatsapp.save()
+    print ('===========')
+    print ('type_message')
+    print ('===========')
+
+#    if type_message is not 'image' and type_message is not 'video' and type_message is not 'audio':
+    if type_message is 'text':
+        whatsapp = MessageCenterReceived(contact=contact,
+                                         message_received=message)
+        whatsapp.save()
 """
     dbphone = MediaMessageReceived.objects.filter(phone=phone).order_by('-date_creation')
     len_dbphone = len(dbphone)
@@ -278,11 +298,11 @@ while True:
         received = media_message.value
         phone = received[:11]
         media_list = media_message.getListMessage()
-        print '++++++++++++++++++++++++++++++++++++++++'
-        print 'Phone: ' + phone
-        print 'Media URL: ' + media_list['url']
-        print 'Type: ' + media_list['type']
-        print '++++++++++++++++++++++++++++++++++++++++'
+        print ('++++++++++++++++++++++++++++++++++++++++')
+        print ('Phone: ' + phone)
+        print ('Media URL: ' + media_list['url'])
+        print ('Type: ' + media_list['type'])
+        print ('++++++++++++++++++++++++++++++++++++++++')
 
         saveWhatsapp(phone=phone,
                      type_message=media_list['type'],
@@ -294,10 +314,10 @@ while True:
         phone = received[:11]
         message = received[11:]
 
-        print '------------------------'
-        print 'Phone: ' + phone
-        print 'Message: ' + message
-        print '------------------------'
+        print ('------------------------')
+        print ('Phone: ' + phone)
+        print ('Message: ' + message)
+        print ('------------------------')
 
         saveWhatsapp(phone=phone, type_message='text', message=message)
 #        answer('Gracias por el mensaje', phone)

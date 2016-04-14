@@ -37,9 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'contacts',
-    'message',
-    'groups',
+    'messagescenter.apps.MessagescenterConfig',
+    'socialnetworks.apps.SocialnetworksConfig',
+    'contacts.apps.ContactsConfig',
+    'groups.apps.GroupsConfig',
     'scripts',
 ]
 
